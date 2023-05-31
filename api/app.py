@@ -35,7 +35,7 @@ async def log_request(request: Request):
 # Log response status code and body
 @APP.middleware("http")
 async def log_response(request: Request, call_next):
-    response = await call_next(request)
+    response: Response = await call_next(request)
     body = b""
     async for chunk in response.body_iterator:
         body += chunk

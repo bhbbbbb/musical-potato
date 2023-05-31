@@ -1,4 +1,5 @@
 import schemas
+from urllib import parse
 from fastapi import APIRouter, Response, UploadFile, status
 from storage import storage
 
@@ -17,12 +18,12 @@ async def create_file(file: UploadFile) -> schemas.File:
 
 @router.get("/", status_code=status.HTTP_200_OK, name="file:retrieve_file")
 async def retrieve_file(filename: str) -> Response:
-    # TODO: Add headers to ensure the filename is displayed correctly
-    #       You should also ensure that enables the judge to download files directly
     return Response(
         await storage.retrieve_file(filename),
         media_type="application/octet-stream",
-        headers={},
+        headers={
+            'Content-Disposition': f'attachment; filename*=utf-8\'\'"{parse.quote(filename)}"',
+        },
     )
 
 
@@ -33,5 +34,5 @@ async def update_file(file: UploadFile) -> schemas.File:
 
 @router.delete("/", status_code=status.HTTP_200_OK, name="file:delete_file")
 async def delete_file(filename: str) -> str:
-    await storage.delete_file(filename)
+    storage.delete_file(filename)
     return schemas.Msg(detail="File deleted")
