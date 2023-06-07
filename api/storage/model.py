@@ -3,6 +3,7 @@ import os
 import hashlib
 from pathlib import Path
 from typing import List
+from base64 import b64encode
 
 import schemas
 from config import settings
@@ -107,7 +108,7 @@ class Storage:
             name=file.filename,
             size=len(content),
             checksum=hashlib.md5(content).hexdigest(),
-            content=content.decode(),
+            content=b64encode(content),
             content_type=file.content_type,
         )
 
