@@ -93,8 +93,11 @@ class Storage:
         sizes = [(d + 1) if i < m else d for i in range(self.num_blocks - 1)]
         probe = 0
         segs = [content[probe: (probe := probe + s)] for s in sizes]
-        for i in range(m):
-            segs[~i] += b'\x00'
+        
+
+        if m:
+            for i in range(self.num_blocks - 1 - m):
+                segs[~i] += b'\x00'
         
         
         parity = Storage.__get_parity(segs)
