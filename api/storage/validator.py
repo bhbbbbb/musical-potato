@@ -16,7 +16,7 @@ class Validator:
         if self.storage.file_integrity(file.filename):
             raise HTTPException(409, "File already exists", CONTENT_JSON)
         
-        file.read = Validator.register_size_checking_hook(file.read)
+        file.read = await Validator.register_size_checking_hook(file.read)
         
         return await self.storage.create_file(file)
 
@@ -33,7 +33,7 @@ class Validator:
         if not self.storage.file_integrity(file.filename):
             raise HTTPException(404, "File not found", CONTENT_JSON)
 
-        file.read = Validator.register_size_checking_hook(file.read)
+        file.read = await Validator.register_size_checking_hook(file.read)
         
         return await self.storage.update_file(file)
 
@@ -49,12 +49,12 @@ class Validator:
         return self.storage.fix_block(block_id)
 
     @staticmethod
-    def register_size_checking_hook(read_func):
+    async def register_size_checking_hook(read_func):
 
-        async def wrapper(size: int = -1):
-            tem = await read_func(size)
-            if len(tem) > settings.MAX_SIZE:
-                raise HTTPException(413, "File too large", CONTENT_JSON)
-            return tem
+        content = await read_func()
+        if len(content) > settings.MAX_SIZE:
+            raise HTTPException(413, "File too large", CONTENT_JSON)
+        async def wrapper():
+            return content
         
         return wrapper
