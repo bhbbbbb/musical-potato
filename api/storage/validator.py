@@ -24,14 +24,14 @@ class Validator:
     async def retrieve_file(self, filename: str) -> bytes:
 
         if not self.storage.file_integrity(filename):
-            raise HTTPException(404, "File not Found", CONTENT_JSON)
+            raise HTTPException(404, "File not found", CONTENT_JSON)
 
         return await self.storage.retrieve_file(filename)
 
     async def update_file(self, file: UploadFile) -> schemas.File:
         
         if not self.storage.file_integrity(file.filename):
-            raise HTTPException(404, "File not Found", CONTENT_JSON)
+            raise HTTPException(404, "File not found", CONTENT_JSON)
 
         file.read = Validator.register_size_checking_hook(file.read)
         
@@ -41,7 +41,7 @@ class Validator:
     def delete_file(self, filename: str) -> None:
 
         if not self.storage.file_integrity(filename):
-            raise HTTPException(404, "File not Found", CONTENT_JSON)
+            raise HTTPException(404, "File not found", CONTENT_JSON)
 
         return self.storage.delete_file(filename)
     
