@@ -22,7 +22,7 @@ async def retrieve_file(filename: str) -> Response:
         await storage.retrieve_file(filename),
         media_type="application/octet-stream",
         headers={
-            'Content-Disposition': f'attachment; filename*=utf-8\'\'"{parse.quote(filename)}"',
+            'Content-Disposition': f'attachment; filename*=utf-8\'\'{parse.quote(filename)}',
         },
     )
 
